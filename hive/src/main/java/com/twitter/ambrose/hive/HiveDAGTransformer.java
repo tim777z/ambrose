@@ -27,6 +27,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.twitter.ambrose.model.AmbroseException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -92,7 +94,7 @@ public class HiveDAGTransformer {
     catch (Exception e) {
       mapWorkClazz = MapredWork.class;
       LOG.info("No Hive 0.12.0 compatible API was found, couldn't load " + mapWorkClassName);
-      LOG.debug(e);
+      LOG.debug("Exception caught while checking Hive API compatibility: {}", e.toString());
     }
 
     Method m_getPathToAlias;
@@ -100,8 +102,8 @@ public class HiveDAGTransformer {
       m_getPathToAlias = mapWorkClazz.getDeclaredMethod("getPathToAliases");
     }
     catch (Exception e) {
-      LOG.fatal("Can't access to getPathToAliases() on " + mapWorkClazz.getName(), e);
-      throw new RuntimeException("Incompatible Hive API found. Expected: 0.11.0+", e);
+      LOG.error("Can't access to getPathToAliases() on " + mapWorkClazz.getName(), e);
+      throw new AmbroseException("Incompatible Hive API found. Expected: 0.11.0+", e);
     }
 
     initClosure(m_getMapWork, m_getPathToAlias);
@@ -132,8 +134,8 @@ public class HiveDAGTransformer {
           return (LinkedHashMap<String, ArrayList<String>>) m_getPathToAlias.invoke(obj);
         }
         catch (Exception e) {
-          LOG.fatal(e);
-          throw new RuntimeException("Incompatible Hive API found. Expected: 0.11.0+", e);
+          LOG.error("Exception during Hive API initClosure: {}", e.toString(), e);
+          throw new AmbroseException("Incompatible Hive API found. Expected: 0.11.0+", e);
         }
       }
     };

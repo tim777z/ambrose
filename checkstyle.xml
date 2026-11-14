@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE checkstyle PUBLIC
+  "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+  "https://checkstyle.org/dtds/checkstyle-1.3.dtd">
+<checkstyle>
+  <module name="Checker">
+    <property name="charset" value="UTF-8"/>
+
+    <module name="TreeWalker">
+      <!-- Import statements should be at the top of the file -->
+      <module name="ImportOrder">
+        <property name="order" value="java, javax, org, com"/>
+      </module>
+
+      <!-- No TODO comments without explanation -->
+      <module name="AvoidDuplicateLiterals"/>
+
+      <!-- Method rules -->
+      <module name="MethodLength">
+        <property name="max" value="50"/>
+      </module>
+
+      <!-- Class rules -->
+      <module name="ClassObjectGrouping">
+
+      </module>
+
+      <!-- Import rules -->
+      <module name>
+</module>

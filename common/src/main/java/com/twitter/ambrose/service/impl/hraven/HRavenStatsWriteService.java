@@ -27,8 +27,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -81,7 +81,7 @@ import com.twitter.hraven.util.StringUtil;
  */
 @SuppressWarnings("rawtypes")
 public class HRavenStatsWriteService implements StatsWriteService {
-  private static final Log LOG = LogFactory.getLog(HRavenStatsWriteService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HRavenStatsWriteService.class);
   private final String username;
   private final Set<String> runningJobs;
   private final Set<String> completedJobs;
