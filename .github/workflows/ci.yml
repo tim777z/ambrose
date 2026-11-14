@@ -17,3 +17,4 @@ jobs:
           distribution: 'temurin'
       - run: mvn -B test
       - run: mvn -B jacoco:report
+      - run: mvn -B checkstyle:check
