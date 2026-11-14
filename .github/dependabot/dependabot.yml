@@ -1,0 +1,29 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      hadoop:
+        update-type: "version-update:snapshot"
+        package-glob: "**/hadoop-core**
+      pig:
+        update-type: "version-update:snapshot"
+        package-glob: "**/pig**
+      hive:
+        update-type: "version-update:snapshot"
+        package-glob: "**/hive-common**,**/hive-exec**,**/hive-cli**
+      cascading:
+        update-type: "version-update:snapshot"
+        package-glob: "**/cascading-core**,**/cascading-local**,**/cascading-hadoop**
+      jackson:
+        update-type: "version-update:snapshot"
+        package-glob: "**/jackson-core**,**/jackson-annotations**,**/jackson-databind**
+      guava:
+        update-type: "version-update:snapshot"
+        package-glob: "**/guava**
+      slf4j:
+        update-type: "version-update:snapshot"
+        package-glob: "**/slf4j-api**
