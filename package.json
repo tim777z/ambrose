@@ -1,0 +1,14 @@
+{
+  "name": "ambrose",
+  "version": "0.4.3-SNAPSHOT",
+  "description": "Ambrose - Twitter platform for visualization and real-time monitoring of MapReduce data workflows",
+  "scripts": {
+    "lint": "eslint 'modules/ambrose/**/*.js' 'common/src/main/resources/com/twitter/ambrose/server/web/js/**/*.js'",
+    "lint:fix": "eslint 'modules/ambrose/**/*.js' 'common/src/main/resources/com/twitter/ambrose/server/web/js/**/*.js' --fix"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.0"
+  }
+}
