@@ -4,18 +4,14 @@ ARG VERSION=0.4.3-SNAPSHOT
 
 WORKDIR /ambrose
 
+# Copy only the necessary modules for the demo
 COPY pom.xml .
 COPY ambrose-common ./ambrose-common
-COPY pig ./pig
-COPY hive ./hive
-COPY cascading ./cascading
-COPY scalding ./scalding
 
-# Install Maven and build
+# Install Maven and build only the common module
 RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 
-# Build the project
-RUN mvn -B clean package -DskipTests
+RUN mvn -B -pl ambrose-common clean package -DskipTests
 
 # Expose the demo port
 EXPOSE 8080
