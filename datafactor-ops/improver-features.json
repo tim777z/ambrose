@@ -1,0 +1,1 @@
+{"features":[{"id":"enforce-jacoco-coverage","status":"verified","test":"mvn -B verify"},{"id":"enforce-checkstyle-gate","status":"verified","test":"mvn -B checkstyle:check"},{"id":"add-dependency-check","status":"verified","test":"mvn -B dependency-check:check"}]}
