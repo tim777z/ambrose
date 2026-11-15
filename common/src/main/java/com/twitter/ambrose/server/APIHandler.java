@@ -97,6 +97,9 @@ public class APIHandler extends AbstractHandler {
   private static final String QUERY_PARAM_WORKFLOW_ID = "workflowId";
   private static final String QUERY_PARAM_LAST_EVENT_ID = "lastEventId";
   private static final String QUERY_PARAM_MAX_EVENTS = "maxEvents";
+  private static final int MAX_CLUSTER_LENGTH = 50;
+  private static final int MAX_USER_LENGTH = 100;
+  private static final int MAX_EVENTS = 1000;
   private static final String MIME_TYPE_HTML = "text/html";
   private static final String MIME_TYPE_JSON = "application/json";
   private WorkflowIndexReadService workflowIndexReadService;
@@ -119,7 +122,13 @@ public class APIHandler extends AbstractHandler {
 
     } else if (target.endsWith("/workflows")) {
       String cluster = normalize(request.getParameter(QUERY_PARAM_CLUSTER));
+      if (cluster != null && cluster.length() > MAX_CLUSTER_LENGTH) {
+        throw new IllegalArgumentException("Cluster name exceeds maximum length of " + MAX_CLUSTER_LENGTH);
+      }
       String user = normalize(request.getParameter(QUERY_PARAM_USER));
+      if (user != null && user.length() > MAX_USER_LENGTH) {
+        throw new IllegalArgumentException("User name exceeds maximum length of " + MAX_USER_LENGTH);
+      }
       String statusParam = normalize(request.getParameter(QUERY_PARAM_STATUS));
       Status status = getEnum(statusParam, Status.class, null);
       String startRowParam = normalize(request.getParameter(QUERY_PARAM_START_KEY));
@@ -136,6 +145,12 @@ public class APIHandler extends AbstractHandler {
 
     } else if (target.endsWith("/dag")) {
       String workflowId = normalize(request.getParameter(QUERY_PARAM_WORKFLOW_ID));
+      if (workflowId != null && workflowId.length() == 0) {
+        workflowId = null;
+      }
+      if (workflowId != null && workflowId.length() > 100) {
+        throw new IllegalArgumentException("Workflow ID exceeds maximum length of 100");
+      }
 
       LOG.info("Submitted request for workflowId={}", workflowId);
       Map<String, DAGNode<Job>> dagNodeNameMap =
@@ -154,9 +169,17 @@ public class APIHandler extends AbstractHandler {
       Integer lastEventId = getInt(lastEventIdParam, -1);
       
       Integer maxEvents = getInt(request.getParameter(QUERY_PARAM_MAX_EVENTS), -1);
+      if (maxEvents != null && maxEvents > MAX_EVENTS) {
+        maxEvents = MAX_EVENTS;
+      }
+
+      String workflowIdParam = request.getParameter(QUERY_PARAM_WORKFLOW_ID);
+      if (workflowIdParam != null && workflowIdParam.length() > 100) {
+        throw new IllegalArgumentException("Workflow ID exceeds maximum length of 100");
+      }
 
       Collection<Event> events = statsReadService
-          .getEventsSinceId(request.getParameter(QUERY_PARAM_WORKFLOW_ID), lastEventId, maxEvents);
+          .getEventsSinceId(workflowIdParam, lastEventId, maxEvents);
 
       response.setContentType(MIME_TYPE_JSON);
       response.setStatus(HttpServletResponse.SC_OK);
