@@ -1,0 +1,27 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": "airbnb-base",
+  "plugins": ["import"],
+  "rules": {
+    "no-console": "warn",
+    "no-unused-vars": ["error", {"argsIgnorePattern": "^_", "varsIgnorePattern": "^_"}],
+    "eqeqeq": "error",
+    "spaced-comment": "error",
+    "no-underscore-dangle": "warn",
+    "comma-dangle": ["error", "always-multiline"],
+    "no-else-return": "error",
+    "default-case": "error",
+    "no-trailing-spaces": "error",
+    "lines-around-comment": "warn",
+    "no-param-reassign": "error"
+  },
+  "ignorePatterns": [
+    "node_modules",
+    "target",
+    ".git"
+  ]
+}

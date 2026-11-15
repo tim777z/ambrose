@@ -1,11 +1,11 @@
 language: java
 java:
-  - oraclejdk17
+  - temurin17
 cache:
   directories:
     - '$HOME/.m2'
     - '$HOME/.gradle'
 matrix:
   include:
-    - java: oraclejdk17
+    - java: temurin17
       scala: 2.12.18
