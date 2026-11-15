@@ -25,4 +25,4 @@ jobs:
         with:
           name: jacoco-report
           path: target/site/jacoco
-      - run: mvn -B dependency-check:check
+      - run: mvn -B org.owasp:dependency-check-maven:check
