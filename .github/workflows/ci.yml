@@ -35,6 +35,9 @@ jobs:
       - name: Run Maven checkstyle check
         run: mvn -B checkstyle:check -Dmaven.repo.local=$HOME/.m2
 
+      - name: Run Maven tests
+        run: mvn -B test -Dmaven.repo.local=$HOME/.m2
+
       - name: Run Maven JaCoCo check
         run: mvn -B jacoco:check -Dmaven.repo.local=$HOME/.m2
 

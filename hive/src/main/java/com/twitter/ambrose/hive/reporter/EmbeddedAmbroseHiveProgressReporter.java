@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.SortedMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.twitter.ambrose.hive.AmbroseHiveUtil;
 import com.twitter.ambrose.model.Event;
@@ -37,7 +37,7 @@ import com.twitter.ambrose.service.impl.InMemoryStatsService;
  */
 public class EmbeddedAmbroseHiveProgressReporter extends AmbroseHiveProgressReporter {
 
-  private static final Log LOG = LogFactory.getLog(EmbeddedAmbroseHiveProgressReporter.class);
+  private static final Logger LOG = LoggerFactory.getLogger(EmbeddedAmbroseHiveProgressReporter.class);
 
   private InMemoryStatsService service;
   private ScriptStatusServer server;

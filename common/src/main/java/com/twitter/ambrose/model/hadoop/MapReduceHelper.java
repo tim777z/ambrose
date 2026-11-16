@@ -19,8 +19,8 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -38,7 +38,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class MapReduceHelper {
 
-  private static final Log LOG = LogFactory.getLog(MapReduceHelper.class);
+  private static final Logger LOG = LoggerFactory.getLogger(MapReduceHelper.class);
 
   private RunningJob getRunningJob(MapReduceJob job, JobClient jobClient) throws Exception {
     RunningJob runningJob = jobClient.getJob(JobID.forName(job.getId()));

@@ -25,8 +25,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.twitter.ambrose.model.DAGNode;
 import com.twitter.ambrose.model.Event;
@@ -48,7 +48,7 @@ import com.twitter.ambrose.service.StatsWriteService;
  */
 public abstract class AmbroseHiveProgressReporter {
 
-  private static final Log LOG = LogFactory.getLog(AmbroseHiveProgressReporter.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AmbroseHiveProgressReporter.class);
 
   /** DAG and workflow progress shared between ClientStatsPublisher threads */
   private Map<String, DAGNode<Job>> nodeIdToDAGNode;

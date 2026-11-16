@@ -20,8 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.hadoop.mapred.Counters;
 
 import com.twitter.ambrose.model.hadoop.CounterGroup;
@@ -39,7 +39,7 @@ import cascading.stats.hadoop.HadoopStepStats;
 @JsonTypeName("cascading")
 public class CascadingJob extends MapReduceJob {
 
-  private static Log LOG = LogFactory.getLog(CascadingJob.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CascadingJob.class);
 
   private String[] features = {};
 
