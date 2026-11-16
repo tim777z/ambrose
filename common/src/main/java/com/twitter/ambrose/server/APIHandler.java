@@ -109,6 +109,16 @@ public class APIHandler extends AbstractHandler {
     return value;
   }
 
+  /** Returns HTTP 200 with a health status JSON response. */
+  private static void sendHealth(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
+    response.setContentType("application/json");
+    response.setStatus(HttpServletResponse.SC_OK);
+    java.util.Map<String, Object> health = java.util.Collections.singletonMap("status", "healthy");
+    JSONUtil.writeJson(response.getWriter(), health);
+    response.getWriter().close();
+  }
+
   private static final Logger LOG = LoggerFactory.getLogger(APIHandler.class);
   private static final String QUERY_PARAM_CLUSTER = "cluster";
   private static final String QUERY_PARAM_USER = "user";
@@ -136,6 +146,11 @@ public class APIHandler extends AbstractHandler {
       HttpServletRequest request,
       HttpServletResponse response,
       int dispatch) throws IOException, ServletException {
+
+    if (target.endsWith("/health")) {
+      sendHealth(request, response);
+      return;
+    }
 
     if (target.endsWith("/clusters")) {
       sendJson(request, response, workflowIndexReadService.getClusters());

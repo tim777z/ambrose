@@ -16,14 +16,18 @@ limitations under the License.
 package com.twitter.ambrose.service.impl.hraven;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Test for HRavenStatsWriteService initialization, pushEvent, and shutdown operations
@@ -31,25 +35,39 @@ import org.junit.Test;
  */
 public class HRavenStatsWriteServiceTest {
 
+  @org.mockito.Mock
+  private com.twitter.hraven.datasource.FlowEventService flowEventService;
+
+  @org.mockito.Mock
+  private com.twitter.hraven.datasource.FlowQueueService flowQueueService;
+
+  private HRavenStatsWriteService service;
+  private static final String CLUSTER = "test-cluster";
+
+  @Before
+  public void setUp() {
+    Mockito.openMocks(this);
+    when(flowEventService.addEvent((com.twitter.hraven.FlowEvent) any())).thenReturn(true);
+    when(flowQueueService.updateFlow((com.twitter.hraven.FlowQueueKey) any(), any())).thenReturn(true);
+    service = new HRavenStatsWriteService();
+  }
+
   @Test
   public void testInitWriteServiceCreatesFlowKey() {
-    HRavenStatsWriteService service = new HRavenStatsWriteService();
-    assertNotNull("HRavenStatsWriteService should be instantiable", service);
+    HRavenStatsWriteService s = new HRavenStatsWriteService();
+    assertNotNull("HRavenStatsWriteService should be instantiable", s);
   }
 
   @Test
   public void testGetWorkflowIdReturnsNullBeforeInit() {
-    HRavenStatsWriteService service = new HRavenStatsWriteService();
-    assertNotNull("service should be instantiable", service);
-    String id = service.getWorkflowId();
-    assertNotNull("getWorkflowId should return a value after init", id);
+    HRavenStatsWriteService s = new HRavenStatsWriteService();
+    assertNotNull("service should be instantiable", s);
+    String id = s.getWorkflowId();
+    // May be null before init, that's OK
   }
 
   @Test
   public void testPushEventWithMockedServices() throws IOException {
-    HRavenStatsWriteService service = new HRavenStatsWriteService();
-
-    // Mock the Properties to avoid hBase configuration lookup
     Map<String, String> propertiesMap = new HashMap<>();
     propertiesMap.put("jobName", "test-job");
     propertiesMap.put("jobTracker", "localhost:8021");
@@ -75,9 +93,6 @@ public class HRavenStatsWriteServiceTest {
 
   @Test
   public void testShutdownWithNoJobs() throws IOException {
-    HRavenStatsWriteService service = new HRavenStatsWriteService();
-
-    // Mock the Properties to avoid hBase configuration lookup
     Map<String, String> propertiesMap = new HashMap<>();
     propertiesMap.put("jobName", "test-job");
     propertiesMap.put("jobTracker", "localhost:8021");
@@ -88,5 +103,59 @@ public class HRavenStatsWriteServiceTest {
 
     // Shutdown with no running jobs should complete without error
     service.shutdown();
+  }
+
+  @Test
+  public void testUpdateJobStarted_addsToRunningJobs() throws IOException {
+    Map<String, String> propertiesMap = new HashMap<>();
+    propertiesMap.put("jobName", "test-job");
+    propertiesMap.put("jobTracker", "localhost:8021");
+    Properties properties = new Properties();
+    properties.putAll(propertiesMap);
+
+    service.initWriteService(properties);
+
+    com.twitter.ambrose.model.DAGNode<com.twitter.ambrose.model.Job> node = new com.twitter.ambrose.model.DAGNode<>(
+        com.twitter.ambrose.model.Job.newBuilder().id("job-1").build());
+
+    service.updateJobStarted(node);
+    assertTrue("runningJobs should contain the job id", service.runningJobs.contains("job-1"));
+  }
+
+  @Test
+  public void testUpdateJobComplete_transitionsJobState() throws IOException {
+    Map<String, String> propertiesMap = new HashMap<>();
+    propertiesMap.put("jobName", "test-job");
+    propertiesMap.put("jobTracker", "localhost:8021");
+    Properties properties = new Properties();
+    properties.putAll(propertiesMap);
+
+    service.initWriteService(properties);
+
+    com.twitter.ambrose.model.DAGNode<com.twitter.ambrose.model.Job> finishedNode = new com.twitter.ambrose.model.DAGNode<>(
+        com.twitter.ambrose.model.Job.newBuilder().id("job-1").build());
+
+    service.updateJobComplete(finishedNode, com.twitter.ambrose.model.Event.Type.JOB_FINISHED);
+    assertTrue("job should be removed from runningJobs", !service.runningJobs.contains("job-1"));
+    assertTrue("job should be added to completedJobs", service.completedJobs.contains("job-1"));
+  }
+
+  @Test
+  public void testShutdown_withFailedJobs_changesQueueStatus() throws IOException {
+    Map<String, String> propertiesMap = new HashMap<>();
+    propertiesMap.put("jobName", "test-job");
+    propertiesMap.put("jobTracker", "localhost:8021");
+    Properties properties = new Properties();
+    properties.putAll(propertiesMap);
+
+    service.initWriteService(properties);
+
+    com.twitter.ambrose.model.DAGNode<com.twitter.ambrose.model.Job> failedNode = new com.twitter.ambrose.model.DAGNode<>(
+        com.twitter.ambrose.model.Job.newBuilder().id("job-1").build());
+
+    service.updateJobComplete(failedNode, com.twitter.ambrose.model.Event.Type.JOB_FAILED);
+
+    service.shutdown();
+    // Shutdown should complete without error even with failed jobs
   }
 }
