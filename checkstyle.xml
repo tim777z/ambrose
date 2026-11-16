@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <checkstyle>
   <module name="Checker">
-    <property name="charset" value="UTF-8" />
     <module name="TreeWalker">
       <module name="AvoidDuplicateLiterals" />
       <module name="AvoidStarImport" />
       <module name="AcyclicImport" />
-      <module name="Regexp" >
+      <module name="Regexp">
         <property name="format"
           value="^[a-zA-Z_$][a-zA-Z_$0-9]*(\.[a-zA-Z_$][a-zA-Z_$0-9]*)*$" />
       </module>
       <module name="LineLength">
         <property name="max" value="200" />
       </module>
-      <module name="OuterTypeBorder" />
-      <module name="Typewrap" />
     </module>
     <module name="AvoidNestedIfDepth" />
     <module name="AvoidMultipleConditionalInOneStatement" />
