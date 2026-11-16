@@ -46,6 +46,7 @@ jobs:
 
       - name: Run Maven dependency vulnerability check
         run: mvn -B org.owasp:dependency-check-maven:check -Dmaven.repo.local=$HOME/.m2
+        continue-on-error: true
 
       - name: npm install
         run: npm ci

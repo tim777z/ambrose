@@ -6,37 +6,43 @@ WORKDIR /ambrose
 
 # Copy only necessary files for build; .dockerignore excludes unnecessary files
 COPY pom.xml .
-COPY ambrose-common ./ambrose-common
+COPY common ./common
 COPY pig ./pig
 COPY hive ./hive
 COPY cascading ./cascading
 COPY scalding ./scalding
+COPY bin ./bin
 
-# Install Maven and build dependencies
+# Install Maven
 RUN apt-get update && \
-    apt-get install -y maven wget && \
+    apt-get install -y maven && \
     rm -rf /var/lib/apt/lists/*
 
 # Build the project (skip tests for rapid iteration; run separately with `mvn -B test`)
 RUN mvn -B clean package -DskipTests
 
-# Runtime stage: minimal JDK only
+# Runtime stage: minimal JRE plus python for the demo web server
 FROM eclipse-temurin:17-jre-focal
 
 ARG VERSION=0.4.3-SNAPSHOT
 
 WORKDIR /ambrose
 
-# Copy built artifact from builder stage
-COPY --from=builder /ambrose/target/ambrose-common-0.4.3-SNAPSHOT.jar ./ambrose-common/
-COPY --from=builder /ambrose/pig/target/ ./pig/
-COPY --from=builder /ambrose/hive/target/ ./hive/
-COPY --from=builder /ambrose/cascading/target/ ./cascading/
-COPY --from=builder /ambrose/scalding/target/ ./scalding/
+# Install python3 for the demo web server
+RUN apt-get update && \
+    apt-get install -y python3 && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy startup script and config
+# Copy built artifacts from builder stage
+COPY --from=builder /ambrose/common/target/ ./common/target/
+COPY --from=builder /ambrose/pig/target/ ./pig/target/
+COPY --from=builder /ambrose/hive/target/ ./hive/target/
+COPY --from=builder /ambrose/cascading/target/ ./cascading/target/
+COPY --from=builder /ambrose/scalding/target/ ./scalding/target/
+
+# Copy startup script and web resources
 COPY bin/ ./bin/
-COPY docker-compose.yml .
+COPY common/src/main/resources/ ./common/src/main/resources/
 
 # Expose the demo port
 EXPOSE 8080
