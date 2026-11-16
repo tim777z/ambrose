@@ -290,8 +290,8 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.3.2</version>
           <configuration>
-            <source>1.6</source>
-            <target>1.6</target>
+            <source>1.8</source>
+            <target>1.8</target>
             <showDeprecation>true</showDeprecation>
             <optimize>true</optimize>
           </configuration>
@@ -511,6 +511,11 @@
         <plugin>
           <artifactId>maven-source-plugin</artifactId>
           <version>2.1.2</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-wrapper-plugin</artifactId>
+          <version>3.8.0</version>
         </plugin>
 
         <!-- This plugin's configuration is used to store Eclipse M2E plugin
