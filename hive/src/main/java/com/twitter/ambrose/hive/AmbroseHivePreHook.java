@@ -20,8 +20,8 @@ import static com.twitter.ambrose.hive.reporter.AmbroseHiveReporterFactory.getEm
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.hooks.ExecuteWithHookContext;
 import org.apache.hadoop.hive.ql.hooks.HookContext;
@@ -44,7 +44,7 @@ import com.twitter.ambrose.model.Job;
  */
 public class AmbroseHivePreHook implements ExecuteWithHookContext {
 
-    private static final Log LOG = LogFactory.getLog(AmbroseHivePreHook.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AmbroseHivePreHook.class);
 
     /** Timeout in seconds for waiting between two workflows */
     private static final String WF_BETWEEN_SLEEP_SECS_PARAM = "ambrose.wf.between.sleep.seconds";

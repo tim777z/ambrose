@@ -18,8 +18,8 @@ package com.twitter.ambrose.util;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 import com.twitter.ambrose.model.Event;
@@ -27,7 +27,7 @@ import com.twitter.ambrose.service.StatsWriteService;
 
 public final class AmbroseUtils {
 
-  private static Log log = LogFactory.getLog(AmbroseUtils.class);
+  private static final Logger log = LoggerFactory.getLogger(AmbroseUtils.class);
 
   private AmbroseUtils() {}
 

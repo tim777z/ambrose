@@ -20,8 +20,8 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.session.SessionState;
@@ -53,7 +53,7 @@ import static com.twitter.ambrose.hive.reporter.AmbroseHiveReporterFactory.getEm
  */
 public class AmbroseHiveStatPublisher implements ClientStatsPublisher {
 
-  private static final Log LOG = LogFactory.getLog(AmbroseHiveStatPublisher.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AmbroseHiveStatPublisher.class);
 
   /** Running job information */
   private final JobClient jobClient;
