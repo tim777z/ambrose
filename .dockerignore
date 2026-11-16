@@ -1,0 +1,26 @@
+# Docker ignore file for Ambrose
+# Exclude build artifacts and sensitive configs from build context
+
+target/
+*.md5
+*.sha1
+.DS_Store
+node_modules/
+*.log
+*.keystore
+*.truststore
+.git/
+.gitignore
+.env
+.env.local
+.mvn/
+.mvn/*
+.settings/
+.classpath
+.project
+/target/
+/ambrose-common/
+/ambrose-pig/
+/ambrose-hive/
+/ambrose-cascading/
+/ambrose-scalding/

@@ -34,28 +34,36 @@ public final class AmbroseUtils {
   /**
    * Handle and ignore any IOException while sending DagNodeNameMap to statsWriteService
    * @param statsWriteService to send DagNodeNameMap to
-   * @param scriptId unique id of the script
+   * @param scriptId unique id of the script (must not be null)
    * @param dagNodeNameMap map of name to dag node
    */
   public static void sendDagNodeNameMap(StatsWriteService statsWriteService, String scriptId, Map dagNodeNameMap) {
+    if (scriptId == null) {
+      log.error("scriptId must not be null when sending dag node map");
+      return;
+    }
     try {
       statsWriteService.sendDagNodeNameMap(scriptId, dagNodeNameMap);
     } catch (IOException e) {
-      log.error("Couldn't send dag to StatsWriteService", e);
+      log.error("Couldn't send dag to StatsWriteService for scriptId: {}", scriptId, e);
     }
   }
 
   /**
    * Handle and ignore any IOException while sending Event to statsWriteService
    * @param statsWriteService to send event to
-   * @param scriptId unique id of the script
+   * @param scriptId unique id of the script (must not be null)
    * @param event ambrose event
    */
   public static void pushEvent(StatsWriteService statsWriteService, String scriptId, Event event) {
+    if (scriptId == null) {
+      log.error("scriptId must not be null when pushing event");
+      return;
+    }
     try {
       statsWriteService.pushEvent(scriptId, event);
     } catch (IOException e) {
-      log.error("Couldn't send event to StatsWriteService", e);
+      log.error("Couldn't send event to StatsWriteService for scriptId: {}", scriptId, e);
     }
   }
 
