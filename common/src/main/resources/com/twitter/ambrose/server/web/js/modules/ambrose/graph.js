@@ -20,6 +20,9 @@ limitations under the License.
  * and 'getParentIds' functions are defined.
  */
 define(['lib/jquery', './core'], function($, Ambrose) {
+  // Use the application's error logger if available; fall back to console.error
+  var errorLogger = (typeof ambrose !== 'undefined' && ambrose.error) ?
+      ambrose.error : console.error;
   /**
    * Creates graph nodes from data and initializes indices for node access.
    */
@@ -42,7 +45,7 @@ define(['lib/jquery', './core'], function($, Ambrose) {
       $.each(parentIds, function(parentIndex, parentId) {
         var parent = nodesById[parentId];
         if (!parent) {
-          console.warn('No node with id "' + parentId + '" exists:', self);
+          errorLogger('No node with id "' + parentId + '" exists:', self);
           return;
         }
         self.addEdge(child, parent);

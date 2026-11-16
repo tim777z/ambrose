@@ -15,14 +15,15 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - run: mvn -B test
+      - run: mvn -B dependency:resolve -Dmaven.repo.local=$HOME/.m2
+      - run: mvn -B test -Dmaven.repo.local=$HOME/.m2
       - run: npm ci
       - run: npm run lint
-      - run: mvn -B jacoco:check
-      - run: mvn -B checkstyle:check
-      - run: mvn -B jacoco:report
+      - run: mvn -B jacoco:check -Dmaven.repo.local=$HOME/.m2
+      - run: mvn -B checkstyle:check -Dmaven.repo.local=$HOME/.m2
+      - run: mvn -B jacoco:report -Dmaven.repo.local=$HOME/.m2
       - uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
           path: target/site/jacoco
-      - run: mvn -B org.owasp:dependency-check-maven:check
+      - run: mvn -B org.owasp:dependency-check-maven:check -Dmaven.repo.local=$HOME/.m2

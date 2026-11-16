@@ -28,6 +28,9 @@ define([
 ], function(
   $, _, URI, d3, Ambrose, View, JobData
 ) {
+  // Use the application's error logger if available; fall back to console.error
+  var errorLogger = (typeof ambrose !== 'undefined' && ambrose.error) ?
+      ambrose.error : console.error;
   // utility functions
   function isPseudo(node) { return node.pseudo; }
   function isReal(node) { return !(node.pseudo); }
