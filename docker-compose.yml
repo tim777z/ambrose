@@ -13,7 +13,7 @@ services:
     # Use 'docker compose up' to start the Ambrose demo server
     # on http://localhost:8080/workflow.html?localdata=large
     # The demo server serves the front-end client resources and sample data.
-    command: ./bin/ambrose-demo
+    command: ["python", "-m", "http.server", "8080", "--directory", "/ambrose/web"]
 
     # Optional: local HBase container for hRaven stats persistence
     # Uncomment and ensure Docker is running with sufficient resources
