@@ -25,8 +25,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 
@@ -46,7 +46,7 @@ import com.twitter.hraven.datasource.FlowQueueService;
  * Service that is able to read the dag and event from HRaven.
  */
 public class HRavenStatsReadService implements StatsReadService {
-  private static final Log LOG = LogFactory.getLog(HRavenStatsReadService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HRavenStatsReadService.class);
 
   private final FlowQueueService flowQueueService;
   private final FlowEventService flowEventService;

@@ -24,8 +24,8 @@ import com.twitter.ambrose.service.impl.InMemoryStatsService;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * AmbroseCascadingNotifier which buffers workflow stats in memory and starts an internal web server
@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class EmbeddedAmbroseCascadingNotifier extends AmbroseCascadingNotifier {
 
-  private static final Log LOG = LogFactory.getLog(AmbroseCascadingNotifier.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AmbroseCascadingNotifier.class);
   private static final String POST_SCRIPT_SLEEP_SECS_PARAM = "ambrose.post.script.sleep.seconds";
   private static final int POST_SCRIPT_SLEEP_SECS_DEFAULT = 10;
   private final InMemoryStatsService<Job> service;
