@@ -103,6 +103,29 @@ Here are some high-level goals we'd love to see contributions for:
 * Create a new back-end for a different runtime environment
 * Create a standalone Ambrose server that's not embedded in the workflow client
 
+## Running Tests
+
+This project uses Maven for Java unit tests and npm for JavaScript linting. Tests can be run offline:
+
+```bash
+# Java unit tests (Maven)
+mvn -B test
+
+# Java test with coverage check
+mvn -B jacoco:check
+
+# Java checkstyle
+mvn -B checkstyle:check
+
+# Java dependency vulnerability scan
+mvn -B org.owasp:dependency-check-maven:check
+
+# JavaScript linting
+npm run lint
+```
+
+See `.github/workflows/ci.yml` for the full CI pipeline. Note: Some tests require Hadoop/HBase/Hive runtimes; the core unit tests in `common/` module run without external dependencies.
+
 ## Versioning
 
 For transparency and insight into our release cycle, releases will be numbered with the follow format:

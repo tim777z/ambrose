@@ -63,16 +63,16 @@ public class APIHandler extends AbstractHandler {
       try {
         out = Enum.valueOf(enumClass, value);
       } catch (IllegalArgumentException e) {
-        // ignore
+        // ignore - will use defaultValue
       }
     }
     return out;
   }
 
-  private static byte[] getBytes(String value, byte[] defaultValue) {
+  private static byte[] getBytesSafe(String value, byte[] defaultValue) throws IOException {
     byte[] out = defaultValue;
-    if (value != null) {
-      out = BaseEncoding.base64().decode(value);
+    if (value != null && !value.trim().isEmpty()) {
+      out = BaseEncoding.base64().decode(value.trim());
     }
     return out;
   }
@@ -87,6 +87,21 @@ public class APIHandler extends AbstractHandler {
       }
     }
     return out;
+  }
+
+  /** Validate that a string parameter is not null/empty and does not exceed max length. */
+  private static String validateStringParam(String value, int maxLength, String paramName) {
+    if (value == null) {
+      return null;
+    }
+    value = value.trim();
+    if (value.isEmpty()) {
+      return null;
+    }
+    if (value.length() > maxLength) {
+      throw new IllegalArgumentException(paramName + " exceeds maximum length of " + maxLength);
+    }
+    return value;
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(APIHandler.class);
@@ -121,14 +136,8 @@ public class APIHandler extends AbstractHandler {
       sendJson(request, response, workflowIndexReadService.getClusters());
 
     } else if (target.endsWith("/workflows")) {
-      String cluster = normalize(request.getParameter(QUERY_PARAM_CLUSTER));
-      if (cluster != null && cluster.length() > MAX_CLUSTER_LENGTH) {
-        throw new IllegalArgumentException("Cluster name exceeds maximum length of " + MAX_CLUSTER_LENGTH);
-      }
-      String user = normalize(request.getParameter(QUERY_PARAM_USER));
-      if (user != null && user.length() > MAX_USER_LENGTH) {
-        throw new IllegalArgumentException("User name exceeds maximum length of " + MAX_USER_LENGTH);
-      }
+      String cluster = validateStringParam(request.getParameter(QUERY_PARAM_CLUSTER), MAX_CLUSTER_LENGTH, "cluster");
+      String user = validateStringParam(request.getParameter(QUERY_PARAM_USER), MAX_USER_LENGTH, "user");
       String statusParam = normalize(request.getParameter(QUERY_PARAM_STATUS));
       Status status = getEnum(statusParam, Status.class, null);
       String startRowParam = normalize(request.getParameter(QUERY_PARAM_START_KEY));
@@ -144,12 +153,12 @@ public class APIHandler extends AbstractHandler {
       sendJson(request, response, workflows);
 
     } else if (target.endsWith("/dag")) {
-      String workflowId = normalize(request.getParameter(QUERY_PARAM_WORKFLOW_ID));
-      if (workflowId != null && workflowId.length() == 0) {
-        workflowId = null;
-      }
-      if (workflowId != null && workflowId.length() > 100) {
-        throw new IllegalArgumentException("Workflow ID exceeds maximum length of 100");
+      String workflowId = validateStringParam(request.getParameter(QUERY_PARAM_WORKFLOW_ID), 100, "workflowId");
+      if (workflowId != null) {
+        // validateStringParam already enforces max length, but keep null-check for empty string
+        if (request.getParameter(QUERY_PARAM_WORKFLOW_ID).length() == 0) {
+          workflowId = null;
+        }
       }
 
       LOG.info("Submitted request for workflowId={}", workflowId);
@@ -173,10 +182,7 @@ public class APIHandler extends AbstractHandler {
         maxEvents = MAX_EVENTS;
       }
 
-      String workflowIdParam = request.getParameter(QUERY_PARAM_WORKFLOW_ID);
-      if (workflowIdParam != null && workflowIdParam.length() > 100) {
-        throw new IllegalArgumentException("Workflow ID exceeds maximum length of 100");
-      }
+      String workflowIdParam = validateStringParam(request.getParameter(QUERY_PARAM_WORKFLOW_ID), 100, "workflowId");
 
       Collection<Event> events = statsReadService
           .getEventsSinceId(workflowIdParam, lastEventId, maxEvents);
