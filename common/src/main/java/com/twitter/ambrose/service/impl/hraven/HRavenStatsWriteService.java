@@ -143,8 +143,8 @@ public class HRavenStatsWriteService implements StatsWriteService {
           LOG.info("Applying hRaven Zookeeper quorum information from job conf: " + hbaseZKQuorum);
           ZKUtil.applyClusterKeyToConf(hbaseConf, hbaseZKQuorum);
         } catch (IOException ioe) {
-          throw new RuntimeException("Invalid cluster configuration for "
-              + HRAVEN_ZOOKEEPER_QUORUM + " (\"" + hbaseZKQuorum + "\")");
+          throw new IOException("Invalid cluster configuration for "
+              + HRAVEN_ZOOKEEPER_QUORUM + " (\"" + hbaseZKQuorum + "\")", ioe);
         }
       } else if (LOG.isDebugEnabled()) {
         LOG.debug("No cluster configuration found for " + HRAVEN_ZOOKEEPER_QUORUM
@@ -286,13 +286,13 @@ public class HRavenStatsWriteService implements StatsWriteService {
     try {
       flowQueueService = new FlowQueueService(hbaseConf);
     } catch (IOException e) {
-      throw new RuntimeException("Could not instantiate hRaven FlowQueueService", e);
+      throw new IOException("Could not instantiate hRaven FlowQueueService", e);
     }
 
     try {
       flowEventService = new FlowEventService(hbaseConf);
     } catch (IOException e) {
-      throw new RuntimeException("Could not instantiate hRaven FlowEventService", e);
+      throw new IOException("Could not instantiate hRaven FlowEventService", e);
     }
 
     // make sure hRavenClusters.properties file is on the classpath

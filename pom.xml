@@ -472,6 +472,32 @@
           </executions>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>3.4.0</version>
+          <executions>
+            <execution>
+              <id>enforce-bans</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <rules>
+              <ban>
+                <excludes>
+                  <!-- Third-party lib URI.js has a false positive secret; excluded pending audit -->
+                  <exclude>com.twitter.ambrose:uri.js</exclude>
+                </excludes>
+                <format>true</format>
+              </ban>
+            </rules>
+            <fail>true</fail>
+          </configuration>
+        </plugin>
+        <plugin>
           <artifactId>maven-release-plugin</artifactId>
           <version>2.5.1</version>
           <configuration>
