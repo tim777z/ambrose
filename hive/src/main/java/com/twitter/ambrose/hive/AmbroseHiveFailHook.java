@@ -20,8 +20,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.hadoop.hive.conf.HiveConf;
 import org.apache.hadoop.hive.ql.exec.Task;
 import org.apache.hadoop.hive.ql.exec.TaskResult;
@@ -45,7 +45,7 @@ import static com.twitter.ambrose.hive.reporter.AmbroseHiveReporterFactory.getEm
  * 
  */
 public class AmbroseHiveFailHook implements ExecuteWithHookContext {
-  private static final Log LOG = LogFactory.getLog(AmbroseHiveFailHook.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AmbroseHiveFailHook.class);
   private static final String POST_SCRIPT_SLEEP_SECS_PARAM = "ambrose.post.script.sleep.seconds";
 
   @Override

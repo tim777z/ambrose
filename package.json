@@ -3,11 +3,11 @@
   "version": "0.4.3-SNAPSHOT",
   "description": "Ambrose - Twitter platform for visualization and real-time monitoring of MapReduce data workflows",
   "scripts": {
-    "lint": "eslint 'common/src/main/resources/com/twitter/ambrose/server/web/js/**/*.js'",
-    "lint:fix": "eslint 'common/src/main/resources/com/twitter/ambrose/server/web/js/**/*.js' --fix"
+    "lint": "eslint 'common/src/main/resources/com/twitter/ambrose/server/web/js/modules/ambrose/**/*.js' 'common/src/main/resources/com/twitter/ambrose/server/web/js/**/*.js'",
+    "lint:fix": "eslint 'modules/ambrose/**/*.js' 'common/src/main/resources/com/twitter/ambrose/server/web/js/**/*.js' --fix"
   },
   "engines": {
-    "node": "^12.22.0 || ^14.17.0 || >=16.0.0"
+    "node": ">=18.0.0"
   },
   "devDependencies": {
     "eslint": "^8.57.0",

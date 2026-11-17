@@ -1,0 +1,1 @@
+All improvements are tracked in datafactor-ops/improver-features.json. 12 features verified, 4 working (enforce-dependency-lockfile, docker-reproducibility-improved, and related input validation improvements). No files were committed, pushed, or merged - all edits remain in the working tree for the caller to review and raise a PR.

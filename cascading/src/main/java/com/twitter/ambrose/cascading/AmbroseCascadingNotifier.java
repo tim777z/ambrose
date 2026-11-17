@@ -24,8 +24,8 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.twitter.ambrose.model.DAGNode;
 import com.twitter.ambrose.model.Event;
@@ -52,7 +52,7 @@ import cascading.stats.hadoop.HadoopStepStats;
 // TODO: Rename this class to AmbroseFlowListener
 public class AmbroseCascadingNotifier implements FlowListener, FlowStepListener {
 
-  private static final Log LOG = LogFactory.getLog(AmbroseCascadingNotifier.class);
+  private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(AmbroseCascadingNotifier.class);
   private final MapReduceHelper mapReduceHelper = new MapReduceHelper();
   private final StatsWriteService statsWriteService;
   private final Map<String, DAGNode<CascadingJob>> nodesByName = Maps.newTreeMap();

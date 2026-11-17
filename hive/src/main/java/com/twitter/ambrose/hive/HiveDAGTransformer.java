@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
 
 import com.twitter.ambrose.model.AmbroseException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.ql.QueryPlan;
 import org.apache.hadoop.hive.ql.exec.Operator;
@@ -64,7 +64,7 @@ import com.twitter.ambrose.model.Job;
  */
 public class HiveDAGTransformer {
 
-  private static final Log LOG = LogFactory.getLog(HiveDAGTransformer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(HiveDAGTransformer.class);
   private static final Pattern SUBQUERY_ALIAS = Pattern.compile("-subquery\\d+\\:([^\\-]+)");
   private static final String PENDING_JOB = "N/A";
   private static final String TEMP_JOB_ID = "temp. intermediate data";

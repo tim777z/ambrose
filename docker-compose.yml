@@ -9,37 +9,54 @@ services:
       - "8080:8080"
     environment:
       - AMBROSE_PORT=8080
+      - AMBROSE_LOG_LEVEL=INFO
+      - AMBROSE_AUTH_ENABLED=false
+      - HRAVEN_HBASE_CONF_DIR=/ambrose/conf/hbase
     volumes:
       - .:/ambrose
-    # Depends on optional local services (HBase, etc.) - started manually if needed
-    # command: ./bin/ambrose-demo
+    # Use the localdata param to load sample data:
+    #   docker compose up -d && open http://localhost:8080/workflow.html?localdata=large
+    # Without HBase, the demo runs in limited mode (API endpoints return empty data)
+    # but the web UI is functional for visualization
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
 
-  # Optional: local HBase container for hRaven stats persistence
-  # Uncomment and ensure Docker is running with sufficient resources
-  # hbase:
-  #   image: apache/hbase:2.4.0
-  #   environment:
-  #     - HBASE_MANAGEMENT_CONTAINER=1
-  #     - HBASE_ZOOKEEPER_QUORUM=hbase
-  #     - HBASE_ZOOKEEPER_CLIENT_PORT=2181
-  #   ports:
-  #     - "2181:2181"
-  #     - "60000:60000"
-  #   wait-for: zookeeper
-  #   depends_on:
-  #     - zookeeper
+    # Use 'docker compose up' to start the Ambrose demo server
+    # on http://localhost:8080/workflow.html?localdata=large
+    # The demo server serves the front-end client resources and sample data.
+    command: ["python", "-m", "http.server", "8080", "--directory", "/ambrose/web"]
+
+    # Optional: local HBase container for hRaven stats persistence
+    hbase:
+      image: apache/hbase:2.4.0
+      environment:
+        - HBASE_MANAGEMENT_CONTAINER=1
+        - HBASE_ZOOKEEPER_QUORUM=hbase
+        - HBASE_ZOOKEEPER_CLIENT_PORT=2181
+      ports:
+        - "2181:2181"
+        - "60000:60000"
+      depends_on:
+        - zookeeper
 
   # optional: zookeeper for HBase
-  # zookeeper:
-  #   image: apache/zookeeper:3.8.0
-  #   environment:
-  #     - ZOOKEEPER_CLIENT_PORT=2181
-  #   ports:
-  #     - "2181:2181"
+  zookeeper:
+    image: apache/zookeeper:3.8.0
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+    ports:
+      - "2181:2181"
 
-# To run the full offline demo:
-#   docker compose up -d
-#   ./bin/ambrose-demo
+# To run the demo offline (without persistent storage):
+#   docker compose up -d && open http://localhost:8080/workflow.html?localdata=large
+#
+# To run with HBase persistence (job stats saved to HBase):
+#   docker compose -f docker-compose.yml up -d
+#   # HBase and ZooKeeper will be started automatically
 #
 # To run integration tests requiring HBase:
 #   docker compose -f docker-compose.yml -f docker-compose.hbase up -d

@@ -24,8 +24,8 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hive.cli.CliSessionState;
 import org.apache.hadoop.hive.ql.HiveDriverRunHook;
@@ -49,7 +49,7 @@ import static com.twitter.ambrose.hive.reporter.AmbroseHiveReporterFactory.getEm
  */
 public class AmbroseHiveFinishHook implements HiveDriverRunHook {
 
-  private static final Log LOG = LogFactory.getLog(AmbroseHiveFinishHook.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AmbroseHiveFinishHook.class);
   private static final String POST_SCRIPT_SLEEP_SECS_PARAM = "ambrose.post.script.sleep.seconds";
 
   /** Last workflow in the script to be processed */
