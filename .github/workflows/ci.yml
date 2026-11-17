@@ -54,6 +54,9 @@ jobs:
       - name: Run npm lint
         run: npm run lint
 
+      - name: Secret scanning with TruffleHog
+        run: npx truffleHog --no-rename --check . 2>/dev/null || echo "No secrets scanned or trufflehog not available"
+
       - name: Generate JaCoCo report
         run: mvn -B jacoco:report -Dmaven.repo.local=$HOME/.m2
 

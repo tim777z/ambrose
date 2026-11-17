@@ -27,9 +27,15 @@ import com.twitter.ambrose.model.DAGNode;
 import com.twitter.ambrose.model.Job;
 import com.twitter.hraven.hooks.HookContext;
 
+import org.apache.hadoop.hive.ql.QueryPlan;
+import org.apache.hadoop.hive.ql.exec.Task;
+import org.apache.hadoop.hive.ql.plan.MapredWork;
+
+import java.util.Arrays;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**
@@ -73,11 +79,26 @@ public class HiveDAGTransformerTest {
   }
 
   @Test
-  public void createNodeIdToDAGNode_withMockedTasks_populatesMap() {
+  public void createNodeIdToDAGNode_withMockedTasks_populatesMap() throws Exception {
     // Given - set up a mock query plan with tasks
     // This test verifies the createNodeIdToDAGNode logic path
     // with a stubbed HookContext that returns tasks.
     // Full integration requires a running Hive instance with query plans.
-    javax.annotation.Nullable(null);
+    QueryPlan mockQueryPlan = mock(QueryPlan.class);
+    Task<MapredWork> mockTask = mock(Task.class);
+    MapredWork mockMapWork = mock(MapredWork.class);
+
+    when(mockTask.getWork()).thenReturn(mockMapWork);
+    when(mockQueryPlan.getRootTasks()).thenReturn(Arrays.asList(mockTask));
+
+    when(hookContext.getQueryPlan()).thenReturn(mockQueryPlan);
+
+    // When
+    transformer = new HiveDAGTransformer(hookContext);
+
+    // Then
+    Map<String, DAGNode<Job>> nodeIdToDAGNode = transformer.getNodeIdToDAGNode();
+    assertNotNull("Should return a map", nodeIdToDAGNode);
+    assertTrue("Map should contain the mocked task", !nodeIdToDAGNode.isEmpty());
   }
 }
