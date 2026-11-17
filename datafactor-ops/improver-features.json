@@ -36,6 +36,11 @@
       "test": "common/src/test/java/com/twitter/ambrose/model/WorkflowSummaryTest.java"
     },
     {
+      "id": "new-test-event-json-roundtrip",
+      "status": "verified",
+      "test": "common/src/test/java/com/twitter/ambrose/model/EventTest.java"
+    },
+    {
       "id": "add-hraven-stats-write-service-tests",
       "status": "verified",
       "test": "common/src/test/java/com/twitter/ambrose/service/impl/hraven/HRavenStatsWriteServiceTest.java added with 5 new test methods"
@@ -119,6 +124,11 @@
       "id": "improve-ci-stages",
       "status": "verified",
       "test": ".github/workflows/ci.yml restructured with separate lint/test/deploy stages and secret scanning"
+    },
+    {
+      "id": "fresh-clone-test",
+      "status": "not_started",
+      "test": "git clone and mvn -B test works"
     }
   ]
 }

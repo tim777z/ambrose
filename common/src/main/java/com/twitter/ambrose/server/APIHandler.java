@@ -72,7 +72,12 @@ public class APIHandler extends AbstractHandler {
   private static byte[] getBytesSafe(String value, byte[] defaultValue) throws IOException {
     byte[] out = defaultValue;
     if (value != null && !value.trim().isEmpty()) {
-      out = BaseEncoding.base64().decode(value.trim());
+      // Validate that the value is valid Base64-encoded content without control characters
+      String trimmed = value.trim();
+      // Base64 strings should only contain A-Z, a-z, 0-9, +, /, and = padding
+      if (trimmed.matches("[A-Za-z0-9+/]*={0,2}")) {
+        out = BaseEncoding.base64().decode(trimmed);
+      }
     }
     return out;
   }
@@ -168,12 +173,11 @@ public class APIHandler extends AbstractHandler {
       sendJson(request, response, workflows);
 
     } else if (target.endsWith("/dag")) {
-      String workflowId = validateStringParam(request.getParameter(QUERY_PARAM_WORKFLOW_ID), 100, "workflowId");
-      if (workflowId != null) {
-        // validateStringParam already enforces max length, but keep null-check for empty string
-        if (request.getParameter(QUERY_PARAM_WORKFLOW_ID).length() == 0) {
-          workflowId = null;
-        }
+      String rawWorkflowId = request.getParameter(QUERY_PARAM_WORKFLOW_ID);
+      String workflowId = validateStringParam(rawWorkflowId, 100, "workflowId");
+      // If workflowId is null (param missing/empty), skip the empty-string check
+      if (workflowId != null && rawWorkflowId != null && rawWorkflowId.length() == 0) {
+        workflowId = null;
       }
 
       LOG.info("Submitted request for workflowId={}", workflowId);
