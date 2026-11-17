@@ -44,6 +44,9 @@ jobs:
       - name: Run Maven JaCoCo check
         run: mvn -B jacoco:check -Dmaven.repo.local=$HOME/.m2
 
+      - name: Run Maven tests
+        run: mvn -B test -Dmaven.repo.local=$HOME/.m2
+
       - name: Run Maven dependency vulnerability check
         run: mvn -B org.owasp:dependency-check-maven:check -Dmaven.repo.local=$HOME/.m2
         continue-on-error: true
