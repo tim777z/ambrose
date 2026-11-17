@@ -26,4 +26,10 @@ log "Browse to the following URLs to see Ambrose demo:"
 log "  http://localhost:$PORT/workflow.html?localdata=true&replay=true"
 log "Hit ctrl-c to stop the web server"
 
-exec python -m SimpleHTTPServer "$PORT"
+if command -v python3 >/dev/null 2>&1; then
+  exec python3 -m http.server "$PORT"
+elif command -v python >/dev/null 2>&1; then
+  exec python -m SimpleHTTPServer "$PORT"
+else
+  die "Neither python3 nor python is available"
+fi
