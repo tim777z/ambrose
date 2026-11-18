@@ -1,0 +1,34 @@
+name: Dependabot
+
+updates:
+  # Dependency updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    # Ignore internal Twitter artifacts that can't be resolved here
+    ignore:
+      - dependency-name: "com.twitter.common*"
+        # Hadoop/Hive/Pig versions pinned for compatibility; update when migrating runtimes
+      - dependency-name: "org.apache.hadoop"
+        versioning-strategy: "pin"
+      - dependency-name: "org.apache.hive"
+        versioning-strategy: "pin"
+      - dependency-name: "org.apache.pig"
+        versioning-strategy: "pin"
+
+  # Dependency updates for Maven (Java)
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    # Ignore internal Twitter artifacts not available in this environment
+    ignore:
+      - dependency-name: "com.twitter.common*"
+        # Internal artifacts; update when migrating runtimes
+      - dependency-name: "com.twitter.hraven"
+        versioning-strategy: "pin"
