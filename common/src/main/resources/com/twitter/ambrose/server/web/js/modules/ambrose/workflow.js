@@ -22,6 +22,10 @@ limitations under the License.
 define(['lib/jquery', 'lib/uri', './core', './client', './graph'], function(
   $, URI, Ambrose, Client, Graph
 ) {
+  // Use the application's error logger if available; fall back to console.error
+  var errorLogger = (typeof Ambrose !== 'undefined' && Ambrose.error) ?
+      Ambrose.error : console.error;
+
   // Maximum number of consecutive client failures before event polling is stopped.
   var MAX_CLIENT_FAILURES = 10;
 
@@ -112,7 +116,7 @@ define(['lib/jquery', 'lib/uri', './core', './client', './graph'], function(
       // define callbacks
       var self = this;
       var handleError = function(textStatus, errorThrown) {
-        console.error('Failed to load jobs:', textStatus, errorThrown);
+        errorLogger('Failed to load jobs:', textStatus, errorThrown);
         self.trigger('error.loadJobs', [null, textStatus, errorThrown]);
       };
       var handleSuccess = function(data, textStatus) {
@@ -142,7 +146,7 @@ define(['lib/jquery', 'lib/uri', './core', './client', './graph'], function(
           // index job by name
           var name = job.name = node.name;
           if (name in jobsByName) {
-            console.error("Multiple jobs found with name '" + name + "':", self);
+            errorLogger("Multiple jobs found with name '" + name + "':", self);
             return;
           }
           jobsByName[name] = job;
@@ -151,7 +155,7 @@ define(['lib/jquery', 'lib/uri', './core', './client', './graph'], function(
           if (job.id) {
             var id = job.id;
             if (id in jobsById) {
-              console.error("Multiple jobs found with id '" + id + "':", self);
+              errorLogger("Multiple jobs found with id '" + id + "':", self);
               return;
             }
             jobsById[id] = job;
@@ -167,7 +171,7 @@ define(['lib/jquery', 'lib/uri', './core', './client', './graph'], function(
           $.each(job.childNames = node.successorNames, function(i, childName) {
             var child = jobsByName[childName];
             if (!child) {
-              console.error("No job with name '" + childName + "' exists", self);
+              errorLogger("No job with name '" + childName + "' exists", self);
               return;
             }
             var parentNames = child.parentNames || (child.parentNames = []);
@@ -265,7 +269,7 @@ define(['lib/jquery', 'lib/uri', './core', './client', './graph'], function(
       // error handler
       var self = this;
       var handleError = function(textStatus, errorThrown) {
-        console.error('Failed to poll events:', self, textStatus, errorThrown);
+        errorLogger('Failed to poll events:', self, textStatus, errorThrown);
         if (++self.clientFailureCount > MAX_CLIENT_FAILURES)
           self.stopEventPolling();
         self.trigger('error.pollEvents', [null, textStatus, errorThrown]);
@@ -293,7 +297,7 @@ define(['lib/jquery', 'lib/uri', './core', './client', './graph'], function(
           var data = event.payload;
 
           if (!id || !type || !data) {
-            console.error('Invalid event data:', self, event);
+            errorLogger('Invalid event data:', self, event);
             return;
           }
 
@@ -349,7 +353,7 @@ define(['lib/jquery', 'lib/uri', './core', './client', './graph'], function(
             job.status = 'FAILED';
             break;
           default:
-            console.error("Unsupported event type '" + type + "':", self, event);
+            errorLogger("Unsupported event type '" + type + "':", self, event);
             return;
           }
 
