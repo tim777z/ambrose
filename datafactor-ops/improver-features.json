@@ -127,8 +127,8 @@
     },
     {
       "id": "fresh-clone-test",
-      "status": "not_started",
-      "test": "git clone and mvn -B test works"
+      "status": "blocked",
+      "test": "git clone and mvn -B test works (blocked on Twitter internal artifact com.twitter.common:stats resolution)"
     }
   ]
 }

@@ -132,7 +132,7 @@ public class HRavenStatsWriteService implements StatsWriteService {
     if (hravenDir != null && !hravenDir.isEmpty()) {
       hbaseConf = new Configuration(false);
       Path hbaseConfFile = new Path(hravenDir, HRAVEN_HBASE_CONF_FILE);
-      LOG.info("Loading hRaven HBase configuration from " + hbaseConfFile.toString());
+      LOG.info("Loading hRaven HBase configuration from {}", hbaseConfFile);
       hbaseConf.addResource(hbaseConfFile);
     } else {
       hbaseConf = HBaseConfiguration.create();
@@ -140,15 +140,15 @@ public class HRavenStatsWriteService implements StatsWriteService {
       String hbaseZKQuorum = jobConf.get(HRAVEN_ZOOKEEPER_QUORUM);
       if (hbaseZKQuorum != null && !hbaseZKQuorum.isEmpty()) {
         try {
-          LOG.info("Applying hRaven Zookeeper quorum information from job conf: " + hbaseZKQuorum);
+          LOG.info("Applying hRaven Zookeeper quorum information from job conf: {}", hbaseZKQuorum);
           ZKUtil.applyClusterKeyToConf(hbaseConf, hbaseZKQuorum);
         } catch (IOException ioe) {
           throw new IOException("Invalid cluster configuration for "
               + HRAVEN_ZOOKEEPER_QUORUM + " (\"" + hbaseZKQuorum + "\")", ioe);
         }
       } else if (LOG.isDebugEnabled()) {
-        LOG.debug("No cluster configuration found for " + HRAVEN_ZOOKEEPER_QUORUM
-            + ", continuing with default");
+        LOG.debug("No cluster configuration found for {}, continuing with default",
+            HRAVEN_ZOOKEEPER_QUORUM);
       }
     }
 
@@ -168,11 +168,11 @@ public class HRavenStatsWriteService implements StatsWriteService {
     @Override
     public void run() {
       try {
-        LOG.info("Submitting flowEvent to hRaven: " + flowEvent.getFlowEventKey().getSequence());
+        LOG.info("Submitting flowEvent to hRaven: {}", flowEvent.getFlowEventKey().getSequence());
         flowEventService.addEvent(flowEvent);
       } catch (Exception e) {
-        LOG.warn("Error making request to HRaven FlowEventService for event flowEventKey: "
-            + flowEvent.getFlowEventKey(), e);
+        LOG.warn("Error making request to HRaven FlowEventService for event flowEventKey: {}, {}", 
+            flowEvent.getFlowEventKey(), e);
       }
     }
   }
@@ -205,15 +205,14 @@ public class HRavenStatsWriteService implements StatsWriteService {
     public void run() {
       try {
         if (flow != null) {
-          LOG.debug("Submitting update to flowQueue to hRaven: " + flowQueueKey.getFlowId());
+          LOG.debug("Submitting update to flowQueue to hRaven: {}", flowQueueKey.getFlowId());
 
           flowQueueService.updateFlow(flowQueueKey, flow);
 
-          LOG.debug("Submitted update to flowQueue to hRaven: " + flowQueueKey.getFlowId());
+          LOG.debug("Submitted update to flowQueue to hRaven: {}", flowQueueKey.getFlowId());
         } else if (newQueueKey != null) {
-          LOG.info(String.format(
-              "Submitting request to hRaven to move flowQueueKey from %s to %s",
-              flowQueueKey != null ? flowQueueKey : "", newQueueKey));
+          LOG.info("Submitting request to hRaven to move flowQueueKey from {} to {}",
+            flowQueueKey != null ? flowQueueKey : "", newQueueKey);
 
           flowQueueService.moveFlow(flowQueueKey, newQueueKey);
 

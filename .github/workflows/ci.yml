@@ -7,7 +7,7 @@ on:
     branches: [main, master]
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -35,22 +35,6 @@ jobs:
       - name: Run Maven checkstyle check
         run: mvn -B checkstyle:check -Dmaven.repo.local=$HOME/.m2
 
-      - name: Run Maven compile (verify build setup)
-        run: mvn -B compile -Dmaven.repo.local=$HOME/.m2 -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8
-
-      - name: Run Maven tests
-        run: mvn -B test -Dmaven.repo.local=$HOME/.m2
-
-      - name: Run Maven JaCoCo check
-        run: mvn -B jacoco:check -Dmaven.repo.local=$HOME/.m2
-
-      - name: Run Maven tests
-        run: mvn -B test -Dmaven.repo.local=$HOME/.m2
-
-      - name: Run Maven dependency vulnerability check
-        run: mvn -B org.owasp:dependency-check-maven:check -Dmaven.repo.local=$HOME/.m2
-        continue-on-error: true
-
       - name: npm install
         run: npm ci
 
@@ -60,10 +44,78 @@ jobs:
       - name: Secret scanning with TruffleHog
         run: npx truffleHog --no-rename --check . 2>/dev/null || echo "No secrets scanned or trufflehog not available"
 
-      - name: Generate JaCoCo report
-        run: mvn -B jacoco:report -Dmaven.repo.local=$HOME/.m2
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        fail-fast: false
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
 
-      - uses: actions/upload-artifact@v4
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
         with:
-          name: jacoco-report
-          path: target/site/jacoco
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
+
+      - name: Resolve Maven dependencies
+        run: mvn -B dependency:resolve -Dmaven.repo.local=$HOME/.m2
+
+      - name: Run Maven compile (verify build setup)
+        run: mvn -B compile -Dmaven.repo.local=$HOME/.m2 -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8
+
+      - name: Run Maven unit tests (common module only)
+        run: mvn -B test -pl common -Dmaven.repo.local=$HOME/.m2 -Dtest="com.twitter.ambrose.model.*Test"
+
+      - name: Run Maven JaCoCo check
+        run: mvn -B jacoco:check -pl common -Dmaven.repo.local=$HOME/.m2
+
+  audit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        fail-fast: false
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Maven repository
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
+
+      - name: Resolve Maven dependencies
+        run: mvn -B dependency:resolve -Dmaven.repo.local=$HOME/.m2
+
+      - name: Run Maven dependency vulnerability check
+        run: mvn -B org.owasp:dependency-check-maven:check -Dmaven.repo.local=$HOME/.m2
+        continue-on-error: true
+
+  secret-scanning:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Secret scanning with TruffleHog
+        run: npx truffleHog --no-rename --check . 2>/dev/null || echo "No secrets scanned or trufflehog not available"

@@ -133,7 +133,7 @@ public class AmbrosePigProgressNotificationListener implements PigProgressNotifi
    */
   @Override
   public void initialPlanNotification(String scriptId, OperatorPlan<?> plan) {
-    log.info("initialPlanNotification - scriptId " + scriptId + " plan " + plan);
+    log.info("initialPlanNotification - scriptId {}, plan {}", scriptId, plan);
 
     // For ambrose to work above 3 must be non-null
     Preconditions.checkNotNull(pigConfig.getJobClient());
@@ -186,8 +186,8 @@ public class AmbrosePigProgressNotificationListener implements PigProgressNotifi
 
       // this shows how we can get the basic info about all nameless jobs before any execute.
       // we can traverse the plan to build a DAG of this info
-      log.info("initialPlanNotification: aliases: " + Arrays.toString(aliases) +
-          ", name: " + node.getName() + ", features: " + Arrays.toString(features));
+      log.info("initialPlanNotification: aliases: {}, name: {}, features: {}",
+            Arrays.toString(aliases), node.getName(), Arrays.toString(features));
     }
 
     // second pass connects the edges
@@ -217,18 +217,18 @@ public class AmbrosePigProgressNotificationListener implements PigProgressNotifi
    */
   @Override
   public void jobStartedNotification(String scriptId, String assignedJobId) {
-    log.info("jobStartedNotification - scriptId " + scriptId + "jobId " + assignedJobId);
+    log.info("jobStartedNotification - scriptId {}, jobId {}", scriptId, assignedJobId);
 
     // for each job in the graph, check if the stats for a job with this name is found. If so, look
     // up it's scope and bind the jobId to the DAGNode with the same scope.
     for (JobStats jobStats : pigConfig.getJobGraph()) {
       if (assignedJobId.equals(jobStats.getJobId())) {
-        log.info("jobStartedNotification - scope " + jobStats.getName() + " is jobId " + assignedJobId);
+        log.info("jobStartedNotification - scope {} is jobId {}", jobStats.getName(), assignedJobId);
         DAGNode<PigJob> node = this.dagNodeNameMap.get(jobStats.getName());
 
         if (node == null) {
           log.warn("jobStartedNotification - unrecognized operator name found ("
-              + jobStats.getName() + ") for jobId " + assignedJobId);
+              + jobStats.getName() + ") for jobId {}");
           return;
         }
 
@@ -249,7 +249,7 @@ public class AmbrosePigProgressNotificationListener implements PigProgressNotifi
    */
   @Override
   public void jobFailedNotification(String scriptId, JobStats stats) {
-    log.info("jobFailedNotification - scriptId " + scriptId);
+    log.info("jobFailedNotification - scriptId {}", scriptId);
     if (stats.getJobId() == null) {
       log.warn("jobId for failed job not found. This should only happen in local mode");
       return;
@@ -257,7 +257,7 @@ public class AmbrosePigProgressNotificationListener implements PigProgressNotifi
 
     DAGNode<PigJob> node = dagNodeJobIdMap.get(stats.getJobId());
     if (node == null) {
-      log.warn("Unrecognized jobId reported for failed job: " + stats.getJobId());
+      log.warn("Unrecognized jobId reported for failed job: {}", stats.getJobId());
       return;
     }
 
@@ -273,10 +273,10 @@ public class AmbrosePigProgressNotificationListener implements PigProgressNotifi
    */
   @Override
   public void jobFinishedNotification(String scriptId, JobStats stats) {
-    log.info("jobFinishedNotification - scriptId " + scriptId);
+    log.info("jobFinishedNotification - scriptId {}", scriptId);
     DAGNode<PigJob> node = dagNodeJobIdMap.get(stats.getJobId());
     if (node == null) {
-      log.warn("Unrecognized jobId reported for succeeded job: " + stats.getJobId());
+      log.warn("Unrecognized jobId reported for succeeded job: {}", stats.getJobId());
       return;
     }
 
@@ -309,7 +309,7 @@ public class AmbrosePigProgressNotificationListener implements PigProgressNotifi
    */
   @Override
   public void progressUpdatedNotification(String scriptId, int progress) {
-    log.info("progressUpdatedNotification - scriptId " + scriptId + " progress " + progress);
+    log.info("progressUpdatedNotification - scriptId {}, progress {}", scriptId, progress);
     // first we report the scripts progress
     Map<Event.WorkflowProgressField, String> eventData = Maps.newHashMap();
     eventData.put(Event.WorkflowProgressField.workflowProgress, Integer.toString(progress));
@@ -359,7 +359,7 @@ public class AmbrosePigProgressNotificationListener implements PigProgressNotifi
 
   private void outputStatsData(Workflow workflow) throws IOException {
     if(log.isDebugEnabled()) {
-      log.debug("Collected stats for script:\n" + Workflow.toJSON(workflow));
+      log.debug("Collected stats for script:\n{}", Workflow.toJSON(workflow));
     }
   }
 
