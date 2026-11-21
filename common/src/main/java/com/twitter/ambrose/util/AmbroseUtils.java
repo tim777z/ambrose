@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
+import com.twitter.ambrose.model.AmbroseServiceException;
 import com.twitter.ambrose.model.Event;
 import com.twitter.ambrose.service.StatsWriteService;
 
@@ -39,8 +40,7 @@ public final class AmbroseUtils {
    */
   public static void sendDagNodeNameMap(StatsWriteService statsWriteService, String scriptId, Map dagNodeNameMap) {
     if (scriptId == null) {
-      log.error("scriptId must not be null when sending dag node map");
-      return;
+      throw new AmbroseServiceException("scriptId must not be null when sending dag node map");
     }
     try {
       statsWriteService.sendDagNodeNameMap(scriptId, dagNodeNameMap);
@@ -57,8 +57,7 @@ public final class AmbroseUtils {
    */
   public static void pushEvent(StatsWriteService statsWriteService, String scriptId, Event event) {
     if (scriptId == null) {
-      log.error("scriptId must not be null when pushing event");
-      return;
+      throw new AmbroseServiceException("scriptId must not be null when pushing event");
     }
     try {
       statsWriteService.pushEvent(scriptId, event);
